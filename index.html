@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inflection Protocol — The Pre-Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FAF6EF;
+  --card:#FFFFFF;
+  --ink:#4B4844;
+  --ink-soft:#8B8579;
+  --hairline:#D9D5C9;
+  --blue:#70A4DB;
+  --blue-bg:#E2ECF7;
+  --amber:#C96B4C;
+  --amber-bg:#F6E3DB;
+  --teal:#5E8A7E;
+  --teal-bg:#E8F1EE;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Work Sans', system-ui, sans-serif;
+  padding:32px 16px 64px;
+  line-height:1.5;
+}
+.wrap{max-width:600px;margin:0 auto;}
+.eyebrow{
+  font-size:12px;letter-spacing:0.08em;text-transform:uppercase;
+  color:var(--ink-soft);margin:0 0 4px;
+}
+h1{
+  font-family:'Fraunces', Georgia, serif;font-weight:500;
+  font-size:30px;line-height:1.2;margin:0 0 12px;
+}
+.intro{font-size:15px;margin:0 0 20px;max-width:52ch;}
+.intro + .intro{margin-top:-8px;}
+.curve-wrap{position:sticky;top:0;z-index:2;background:var(--bg);padding:10px 0 6px;margin:0 0 20px;}
+.curve-wrap svg{width:100%;height:34px;display:block;}
+#curveProgress{transition:stroke-dashoffset .6s ease;}
+.curve-label{font-size:12px;color:var(--ink-soft);margin:4px 0 0;}
+
+.card{
+  background:var(--card);border:0.5px solid var(--hairline);
+  border-radius:14px;padding:20px;margin-bottom:16px;
+}
+.q-num{font-size:12px;color:var(--ink-soft);margin:0 0 6px;}
+.q-title{font-family:'Fraunces', Georgia, serif;font-weight:500;font-size:19px;line-height:1.35;margin:0 0 6px;}
+.q-hint{font-size:13px;color:var(--ink-soft);margin:0 0 12px;}
+label.field-label{display:block;font-size:12px;color:var(--ink-soft);margin:12px 0 4px;}
+label.field-label:first-of-type{margin-top:0;}
+input[type=text], input[type=email], textarea{
+  width:100%;font-family:'Work Sans',sans-serif;font-size:15px;color:var(--ink);
+  border:0.5px solid var(--hairline);border-radius:10px;padding:12px 14px;
+  background:var(--bg);
+}
+textarea{resize:vertical;min-height:96px;line-height:1.5;}
+input:focus, textarea:focus{outline:2px solid var(--blue);outline-offset:1px;border-color:transparent;}
+
+.because{display:flex;flex-direction:column;gap:10px;}
+.because-row{display:flex;align-items:baseline;gap:10px;}
+.because-row span{font-family:'Fraunces', Georgia, serif;font-size:16px;white-space:nowrap;min-width:92px;}
+.statement-preview{
+  font-family:'Fraunces', Georgia, serif;font-size:17px;line-height:1.5;
+  margin:14px 0 0;padding:14px 16px;border-radius:10px;
+  background:var(--amber-bg);color:var(--ink);display:none;
+}
+.statement-preview.show{display:block;}
+
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
+
+.submit-bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:8px;}
+.save-btn{
+  background:var(--blue);color:#fff;border:none;border-radius:10px;
+  padding:13px 24px;font-family:'Work Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;
+}
+.save-btn:disabled{opacity:.6;cursor:default;}
+.save-btn:active:not(:disabled){transform:scale(0.98);}
+.save-btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px;}
+.status{font-size:13px;color:var(--ink-soft);}
+.status.error{color:var(--amber);font-weight:600;}
+.fine{font-size:12px;color:var(--ink-soft);margin:14px 0 0;}
+
+#doneView{display:none;}
+.done-statement{
+  font-family:'Fraunces', Georgia, serif;font-size:22px;line-height:1.45;
+  margin:0;padding:24px 22px;border-radius:14px;background:var(--card);
+  border:0.5px solid var(--hairline);border-left:3px solid var(--amber);
+}
+.done-note{font-size:15px;margin:20px 0 0;max-width:52ch;}
+
+@media (max-width:480px){
+  h1{font-size:26px;}
+  .because-row{flex-direction:column;gap:4px;}
+  .because-row span{min-width:0;}
+}
+@media (prefers-reduced-motion: reduce){ #curveProgress{transition:none;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="formView">
+    <p class="eyebrow">Inflection Protocol · Waitlist</p>
+    <h1>The Pre-Audit</h1>
+    <p class="intro">Something made you raise your hand and join the waitlist. These five questions help you get clear on what that was, because clarity now is what makes change stick later.</p>
+    <p class="intro">It takes about 10 minutes. Answer honestly, not impressively. Only I'll see this.</p>
+
+    <div class="curve-wrap" aria-hidden="true">
+      <svg viewBox="0 0 560 34" preserveAspectRatio="none">
+        <path d="M0,28 C160,28 220,30 280,17 C340,4 400,6 560,6" fill="none" stroke="#E6DFD1" stroke-width="2"/>
+        <path id="curveProgress" d="M0,28 C160,28 220,30 280,17 C340,4 400,6 560,6" fill="none" stroke="#C96B4C" stroke-width="2" stroke-dasharray="900" stroke-dashoffset="900"/>
+      </svg>
+      <p class="curve-label" id="curveLabel">0 of 5 answered</p>
+    </div>
+
+    <form id="preauditForm" novalidate>
+      <div class="card">
+        <label class="field-label" for="firstName">First name</label>
+        <input type="text" id="firstName" name="firstName" autocomplete="given-name" required>
+        <label class="field-label" for="email">Email (the one you used for the waitlist)</label>
+        <input type="email" id="email" name="email" autocomplete="email" required>
+      </div>
+
+      <div class="card">
+        <p class="q-num">Question 1 of 5</p>
+        <p class="q-title">What made you stop scrolling?</p>
+        <p class="q-hint">What was it about the post or video that made you join the waitlist? What did it name that you'd been feeling?</p>
+        <textarea id="q1" name="q1" data-q aria-label="Question 1"></textarea>
+      </div>
+
+      <div class="card">
+        <p class="q-num">Question 2 of 5</p>
+        <p class="q-title">Where are you now, and where do you want to be?</p>
+        <p class="q-hint">Describe a normal week in your life right now. Then describe the week you want to be living 12 weeks from now.</p>
+        <label class="field-label" for="q2a">Right now</label>
+        <textarea id="q2a" name="q2a" data-q="2" aria-label="A normal week right now"></textarea>
+        <label class="field-label" for="q2b">12 weeks from now</label>
+        <textarea id="q2b" name="q2b" data-q="2" aria-label="The week you want in 12 weeks"></textarea>
+      </div>
+
+      <div class="card">
+        <p class="q-num">Question 3 of 5</p>
+        <p class="q-title">What has gotten in the way before?</p>
+        <p class="q-hint">Think of the last time you committed to a change and it didn't stick. What actually got in the way: time, energy, your environment, other people, your own follow-through?</p>
+        <textarea id="q3" name="q3" data-q aria-label="Question 3"></textarea>
+      </div>
+
+      <div class="card">
+        <p class="q-num">Question 4 of 5</p>
+        <p class="q-title">What does staying the same cost you?</p>
+        <p class="q-hint">If nothing changes in the next year, what does that cost you in your health, your confidence, your work, or your relationships?</p>
+        <textarea id="q4" name="q4" data-q aria-label="Question 4"></textarea>
+      </div>
+
+      <div class="card">
+        <p class="q-num">Question 5 of 5</p>
+        <p class="q-title">What's your why?</p>
+        <p class="q-hint">Finish the sentence. This is the same format you'll use inside the program, so you're already starting.</p>
+        <div class="because">
+          <div class="because-row">
+            <span>Because of</span>
+            <input type="text" id="becauseX" name="becauseX" data-q="5" aria-label="Because of">
+          </div>
+          <div class="because-row">
+            <span>I want to</span>
+            <input type="text" id="wantY" name="wantY" data-q="5" aria-label="I want to">
+          </div>
+        </div>
+        <p class="statement-preview" id="statementPreview"></p>
+      </div>
+
+      <div class="hp" aria-hidden="true">
+        <label for="website">Leave this empty</label>
+        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="submit-bar">
+        <button type="submit" class="save-btn" id="submitBtn">Send my Pre-Audit</button>
+        <span class="status" id="statusMsg" role="status"></span>
+      </div>
+      <p class="fine">Your answers are saved on this device as you type, so you can come back and finish later.</p>
+    </form>
+  </div>
+
+  <div id="doneView">
+    <p class="eyebrow">Inflection Protocol · Waitlist</p>
+    <h1 id="doneHeading">You've started.</h1>
+    <p class="done-statement" id="doneStatement"></p>
+    <p class="done-note">Screenshot this and keep it somewhere you'll see it. When enrollment opens, you'll already know exactly why you're here.</p>
+    <p class="done-note">Watch your inbox. I read every one of these.</p>
+  </div>
+
+</div>
+
+<script>
+// Paste your deployed Apps Script Web App URL here.
+const RELAY_URL = "https://script.google.com/macros/s/AKfycbw8KjmczqzycvIfEWny4nUtcsEcEvFSNsYMgKT-MLgv-_ZAAhG1BWcPzqi4nQ_UM4pb/exec";
+const DRAFT_KEY = "preaudit:draft";
+const FIELDS = ["firstName","email","q1","q2a","q2b","q3","q4","becauseX","wantY"];
+
+const $ = (id) => document.getElementById(id);
+
+/* ---------- draft autosave (localStorage, safely) ---------- */
+function saveDraft(){
+  const data = {};
+  FIELDS.forEach(f => data[f] = $(f).value);
+  try{ localStorage.setItem(DRAFT_KEY, JSON.stringify(data)); }catch(e){}
+}
+function loadDraft(){
+  try{
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if(!raw) return;
+    const data = JSON.parse(raw);
+    FIELDS.forEach(f => { if(data[f]) $(f).value = data[f]; });
+  }catch(e){}
+}
+function clearDraft(){ try{ localStorage.removeItem(DRAFT_KEY); }catch(e){} }
+
+/* ---------- progress curve ---------- */
+function answeredCount(){
+  let n = 0;
+  if($("q1").value.trim()) n++;
+  if($("q2a").value.trim() && $("q2b").value.trim()) n++;
+  if($("q3").value.trim()) n++;
+  if($("q4").value.trim()) n++;
+  if($("becauseX").value.trim() && $("wantY").value.trim()) n++;
+  return n;
+}
+function updateProgress(){
+  const n = answeredCount();
+  $("curveProgress").style.strokeDashoffset = String(900 - Math.round(900 * n / 5));
+  $("curveLabel").textContent = n === 5 ? "All 5 answered" : n + " of 5 answered";
+}
+
+/* ---------- live goal statement ---------- */
+function stripEnd(s){ return s.trim().replace(/[.\s]+$/,""); }
+function statementText(){
+  const x = stripEnd($("becauseX").value), y = stripEnd($("wantY").value);
+  if(!x || !y) return "";
+  return "Because of " + x + ", I want to " + y + ".";
+}
+function updatePreview(){
+  const el = $("statementPreview");
+  const s = statementText();
+  el.textContent = s;
+  el.classList.toggle("show", !!s);
+}
+
+FIELDS.forEach(f => $(f).addEventListener("input", () => {
+  saveDraft(); updateProgress(); updatePreview();
+}));
+
+/* ---------- submit ---------- */
+function setStatus(msg, isError){
+  const el = $("statusMsg");
+  el.textContent = msg;
+  el.className = "status" + (isError ? " error" : "");
+}
+
+$("preauditForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const btn = $("submitBtn");
+  if(btn.disabled) return;
+
+  const firstName = $("firstName").value.trim();
+  const email = $("email").value.trim();
+  if(!firstName || !email){ setStatus("Add your first name and email so I know whose answers these are.", true); $(firstName ? "email" : "firstName").focus(); return; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ setStatus("That email doesn't look complete. Check it and send again.", true); $("email").focus(); return; }
+  if(answeredCount() < 5){ setStatus("Answer all 5 questions before sending. Short answers are fine.", true); return; }
+  if(!RELAY_URL || RELAY_URL.startsWith("PASTE_")){ setStatus("This form isn't connected to a sheet yet.", true); return; }
+
+  btn.disabled = true;
+  btn.textContent = "Sending...";
+  setStatus("");
+
+  const payload = {
+    firstName, email,
+    q1: $("q1").value.trim(),
+    q2Now: $("q2a").value.trim(),
+    q2Future: $("q2b").value.trim(),
+    q3: $("q3").value.trim(),
+    q4: $("q4").value.trim(),
+    becauseX: stripEnd($("becauseX").value),
+    wantY: stripEnd($("wantY").value),
+    statement: statementText(),
+    website: $("website").value,
+    source: new URLSearchParams(location.search).get("src") || ""
+  };
+
+  try{
+    const res = await fetch(RELAY_URL, { method:"POST", body: JSON.stringify(payload) });
+    const result = await res.json();
+    if(result.status === "ok"){
+      clearDraft();
+      $("doneHeading").textContent = "You've started, " + firstName + ".";
+      $("doneStatement").textContent = payload.statement;
+      $("formView").style.display = "none";
+      $("doneView").style.display = "block";
+      window.scrollTo(0,0);
+    } else {
+      throw new Error(result.message || "unknown error");
+    }
+  }catch(err){
+    setStatus("Not sent. Your answers are still here, so try again in a moment.", true);
+    btn.disabled = false;
+    btn.textContent = "Send my Pre-Audit";
+  }
+});
+
+loadDraft();
+updateProgress();
+updatePreview();
+</script>
+</body>
+</html>
